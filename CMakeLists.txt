@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.22)
-project(stm_littlefs VERSION 1.0.0 LANGUAGES C)
+project(stm_littlefs VERSION 1.0.1 LANGUAGES C)
 include(FetchContent)
 
 if(NOT TARGET stm_flash)
@@ -21,9 +21,11 @@ if(NOT TARGET stm_flash)
     message(FATAL_ERROR "stm_flash dependency did not provide its target")
 endif()
 
-# 官方仓库不依赖 STM32；源码仅下载到构建目录，不复制进组件。
+# 组件管理官方依赖；默认下载到同级 littlefs/，编译产物留在构建目录。
 if(NOT TARGET littlefs)
     set(STM_LITTLEFS_SOURCE_DIR "" CACHE PATH "Offline official LittleFS source directory")
+    get_filename_component(lfs_default_fetch_dir "${CMAKE_CURRENT_SOURCE_DIR}/../littlefs" ABSOLUTE)
+    set(STM_LITTLEFS_FETCH_DIR "${lfs_default_fetch_dir}" CACHE PATH "Official LittleFS download directory")
     option(STM_LITTLEFS_FETCH "Fetch official LittleFS when no target/source is supplied" ON)
     set(STM_LITTLEFS_GIT_REPOSITORY "https://github.com/littlefs-project/littlefs.git" CACHE STRING "Official LittleFS repository or trusted mirror")
     if(STM_LITTLEFS_SOURCE_DIR)
@@ -35,6 +37,7 @@ if(NOT TARGET littlefs)
         FetchContent_Declare(littlefs
             GIT_REPOSITORY "${STM_LITTLEFS_GIT_REPOSITORY}"
             GIT_TAG adad0fbbcf5382c20978d07f94f9c13be9041c1b # v2.11.2
+            SOURCE_DIR "${STM_LITTLEFS_FETCH_DIR}"
             SOURCE_SUBDIR stm_littlefs_no_upstream_cmake)
         FetchContent_MakeAvailable(littlefs)
         set(lfs_source "${littlefs_SOURCE_DIR}")

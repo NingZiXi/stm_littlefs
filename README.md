@@ -2,7 +2,7 @@
 
 LittleFS 与 `stm_flash` 的分区适配组件。提供不透明句柄、块地址转换、缓存和错误码转换；文件与目录操作使用官方 `lfs_*` API。无日志、RTT 或 RTOS 依赖。
 
-版本 **v1.0.0**，默认依赖 `stm_flash v3.0.0`、间接依赖 `stm_common v1.0.0`，以及官方 [LittleFS v2.11.2](https://github.com/littlefs-project/littlefs/tree/v2.11.2)。硬件支持范围随 `stm_flash`；当前为 STM32H7 OSPI + W25Q256JV-IQ。适配层不直接依赖型号或 HAL 外设结构。
+版本 **v1.0.1**，默认依赖 `stm_flash v3.0.0`、间接依赖 `stm_common v1.0.0`，以及官方 [LittleFS v2.11.2](https://github.com/littlefs-project/littlefs/tree/v2.11.2)。硬件支持范围随 `stm_flash`；当前为 STM32H7 OSPI + W25Q256JV-IQ。适配层不直接依赖型号或 HAL 外设结构。
 
 ## CMake 接入
 
@@ -12,7 +12,7 @@ LittleFS 与 `stm_flash` 的分区适配组件。提供不透明句柄、块地�
 include(FetchContent)
 FetchContent_Declare(stm_littlefs
     GIT_REPOSITORY https://gitee.com/nzxhg/stm_littlefs.git
-    GIT_TAG v1.0.0
+    GIT_TAG v1.0.1
     SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/Lib/stm_littlefs
 )
 FetchContent_MakeAvailable(stm_littlefs)
@@ -27,13 +27,15 @@ target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE stm_littlefs)
 - LittleFS：已有 `littlefs` target → `STM_LITTLEFS_SOURCE_DIR` 本地源码 → FetchContent 官方 v2.11.2 的固定提交 `adad0fbbcf5382c20978d07f94f9c13be9041c1b`。
 - Flash 的 `stm_common` 依赖由 Flash 自己解析。
 
-组件为官方 `lfs.c`、`lfs_util.c` 创建静态库 `littlefs`，公开其头文件路径；源码在构建目录 `_deps/` 中，不复制分发。默认关闭 LittleFS 的诊断打印。
+组件自动拉取官方源码，为 `lfs.c`、`lfs_util.c` 创建静态库 `littlefs` 并公开头文件路径，主工程无需单独声明或拉取 `littlefs`。默认下载到本组件同级的 `littlefs/`：按上面的配置即为 `Lib/littlefs/`，编译产物和 FetchContent 管理文件仍在构建目录中。默认关闭 LittleFS 的诊断打印。自动下载目录应由主工程忽略，不重复提交官方源码。
 
 以下选项在添加组件前设置；修改缓存中的旧值须使用 CMake GUI、`-D` 或新构建目录：
 
 ```cmake
 set(STM_LITTLEFS_FLASH_GIT_REPOSITORY "https://gitee.com/nzxhg/stm_flash.git" CACHE STRING "")
 set(STM_COMMON_GIT_REPOSITORY "https://gitee.com/nzxhg/stm_common.git" CACHE STRING "")
+# 可选：更改自动下载位置；仍会获取和检查固定版本。
+set(STM_LITTLEFS_FETCH_DIR "${CMAKE_CURRENT_SOURCE_DIR}/Lib/littlefs" CACHE PATH "")
 # 离线 LittleFS，目录内应有 lfs.c/h、lfs_util.c/h。
 set(STM_LITTLEFS_SOURCE_DIR "/absolute/path/to/littlefs" CACHE PATH "")
 set(STM_LITTLEFS_FETCH OFF CACHE BOOL "")
