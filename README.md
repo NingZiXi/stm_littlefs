@@ -2,7 +2,7 @@
 
 LittleFS 与 `stm_flash` 的分区适配组件。提供不透明句柄、块地址转换、缓存和错误码转换；文件与目录操作使用官方 `lfs_*` API。无日志、RTT 或 RTOS 依赖。
 
-版本 **v1.0.1**，默认依赖 `stm_flash v3.0.0`、间接依赖 `stm_common v1.0.0`，以及官方 [LittleFS v2.11.2](https://github.com/littlefs-project/littlefs/tree/v2.11.2)。硬件支持范围随 `stm_flash`；当前为 STM32H7 OSPI + W25Q256JV-IQ。适配层不直接依赖型号或 HAL 外设结构。
+版本 **v1.0.2**，默认依赖 `stm_flash v4.0.0`、间接依赖 `stm_common v1.0.0`，以及官方 [LittleFS v2.11.2](https://github.com/littlefs-project/littlefs/tree/v2.11.2)。硬件支持范围随 `stm_flash`；当前为 STM32H7 OSPI + W25Q256JV-IQ。适配层不直接依赖型号或 HAL 外设结构。
 
 ## CMake 接入
 
@@ -23,7 +23,7 @@ target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE stm_littlefs)
 
 依赖解析：
 
-- Flash：已有 `stm_flash` target → 同级 `stm_flash/` → FetchContent `v3.0.0`。
+- Flash：已有 `stm_flash` target → 同级 `stm_flash/` → FetchContent `v4.0.0`。
 - LittleFS：已有 `littlefs` target → `STM_LITTLEFS_SOURCE_DIR` 本地源码 → FetchContent 官方 v2.11.2 的固定提交 `adad0fbbcf5382c20978d07f94f9c13be9041c1b`。
 - Flash 的 `stm_common` 依赖由 Flash 自己解析。
 
@@ -109,7 +109,7 @@ if (err == STM_OK) { err = littlefs_get_config(adapter, &cfg); }
 
 `littlefs_get_last_error` 查询最近一次块设备回调的底层返回值；后续成功回调会覆盖它，文件不存在等文件系统逻辑错误不会记录为底层错误。
 
-Flash v3 写入/擦除成功前已经等待芯片就绪并读回校验，`sync` 无额外数据需要刷写，只查询实例是否可用。`lfs_file_sync` / `lfs_file_close` 仍必不可少，因为 LittleFS 自身有尚未提交的缓存和元数据。
+Flash v4 写入/擦除成功前已经等待芯片就绪并读回校验，`sync` 无额外数据需要刷写，只查询实例是否可用。`lfs_file_sync` / `lfs_file_close` 仍必不可少，因为 LittleFS 自身有尚未提交的缓存和元数据。
 
 Flash 通信或校验故障会停用句柄，适配层返回 I/O 错误，不伪装成可跳过的局部坏块。恢复时由应用停止文件系统访问、确认底层硬件状态，再重建 Flash 和文件系统对象；组件不自动清除故障、重试擦写或格式化。
 

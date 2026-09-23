@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.22)
-project(stm_littlefs VERSION 1.0.1 LANGUAGES C)
+project(stm_littlefs VERSION 1.0.2 LANGUAGES C)
 include(FetchContent)
 
 if(NOT TARGET stm_flash)
@@ -13,7 +13,7 @@ if(NOT TARGET stm_flash)
         endif()
         FetchContent_Declare(stm_flash
             GIT_REPOSITORY "${STM_LITTLEFS_FLASH_GIT_REPOSITORY}"
-            GIT_TAG v3.0.0)
+            GIT_TAG v4.0.0)
         FetchContent_MakeAvailable(stm_flash)
     endif()
 endif()

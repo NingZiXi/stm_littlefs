@@ -3,6 +3,7 @@
  * @brief   LittleFS 分区挂载和文件读写的最小板级示例
  */
 #include "stm_littlefs.h"
+#include "flash_ospi.h"
 #include <string.h>
 #include "main.h"
 #include "gpio.h"
@@ -15,6 +16,7 @@
 volatile stm_err_t example_result = STM_OK;
 volatile int example_lfs_result = 0;
 static void board_init(void);
+static flash_ospi_context_t flash_host;
 
 // 示例占用 [16 MiB, 17 MiB)，必须由应用明确预留；禁止与固件或原始数据重叠。
 int main(void)
@@ -26,7 +28,10 @@ int main(void)
     lfs_t fs = {0};
     lfs_file_t file = {0};
     const flash_config_t config = {
-        .bus = {.type = FLASH_BUS_OSPI, .handle.ospi = &hospi1}, .chip = FLASH_CHIP_AUTO,
+        .device = &flash_device_w25q256jv_iq,
+        .host = flash_ospi_bind(&flash_host, &hospi1,
+                                __HAL_RCC_GET_OSPI_SOURCE() == RCC_OSPICLKSOURCE_HCLK
+                                    ? HAL_RCC_GetHCLKFreq() : 0U),
         .read_mode = FLASH_READ_QUAD,
     };
     example_result = flash_create(&config, &device);

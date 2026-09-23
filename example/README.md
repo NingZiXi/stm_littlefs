@@ -2,7 +2,7 @@
 
 `main.c` 是独立参考入口，有 `main()` 和完整 `board_init()`，不自动加入库、不依赖日志或 RTT。
 
-参考硬件 STM32H723ZG + W25Q256JV-IQ，25 MHz HSE、CPU 550 MHz、HCLK 275 MHz，OSPI 34.375 MHz。GPIO/OCTOSPI 及 MSP 由参考工程的 CubeMX 文件提供；同时需要启动文件、HAL/CMSIS、SysTick 和内部 RAM 堆。
+参考硬件 STM32H723ZG + W25Q256JV-IQ，25 MHz HSE、CPU 550 MHz、HCLK 275 MHz，OSPI 34.375 MHz。示例使用 `stm_flash v4` 的显式 `flash_device_w25q256jv_iq` 描述符和 `flash_ospi_bind` 控制器接口。GPIO/OCTOSPI 及 MSP 由参考工程的 CubeMX 文件提供；同时需要启动文件、HAL/CMSIS、SysTick 和内部 RAM 堆。
 
 示例分区固定为 `[16 MiB, 17 MiB)`。默认 `EXAMPLE_LITTLEFS_FORMAT=0`，挂载失败直接返回；挂载成功会创建或覆盖 `hello.txt`，写入、同步、读回比较，然后关闭并卸载。
 

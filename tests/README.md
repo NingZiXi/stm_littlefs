@@ -1,6 +1,6 @@
 # 主机软件测试
 
-需要 CMake 3.22+、C/C++ GCC 或 Clang、官方 LittleFS v2.11.2，以及同级 `stm_flash v3.0.0`、`stm_common v1.0.0` 的头文件。
+需要 CMake 3.22+、C/C++ GCC 或 Clang、官方 LittleFS v2.11.2，以及同级 `stm_flash v4.0.0`、`stm_common v1.0.0` 的头文件。
 
 ```sh
 cmake -S tests -B build/tests -G Ninja -DCMAKE_BUILD_TYPE=Debug

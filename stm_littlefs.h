@@ -8,7 +8,7 @@
 #include "stm_flash.h"
 #include "lfs.h"
 
-#define STM_LITTLEFS_VERSION "1.0.1"
+#define STM_LITTLEFS_VERSION "1.0.2"
 
 #if defined(LFS_READONLY) || defined(LFS_THREADSAFE)
 #error "stm_littlefs requires read/write LittleFS with external serialization"
